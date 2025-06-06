@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "noImplicitAny": true,
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "paths": {
+      "@images/*": ["./assets/images/*"],
+      "@styles/*": ["./assets/styles/*"],
+//      "@redux/*": ["./src/redux/*"],
+      "@components/*": ["./src/components/*"],
+    },
+    "target": "es6",
+    "jsx": "react",
+    "allowJs": true,
+    "moduleResolution": "node",
+    "strict": true
+  }
+}
