@@ -1,7 +1,6 @@
 import React from "react";
 import NewGrid, {INewGridItem} from "@components/newsGrid/NewGrid";
 
-
 interface NewsItemProps {
   expandedId: number | null;
   actualId: number;
