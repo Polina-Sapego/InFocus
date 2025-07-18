@@ -6,7 +6,8 @@
   padding: 3%
   height: 100%
   box-shadow: $card-shadow
-  transition: all 0.9s ease
+  max-height: 600px
+  transition: all 0.7s ease
 
   &.expanded
     gap: 0
@@ -25,6 +26,10 @@
       object-fit: cover
       display: block
       transition: transform 0.8s ease, opacity 0.8s ease, border-radius 0.8s ease
+
+    &.below-expanded
+      margin-top: -100px
+      z-index: 0
 
     .page-newsGrid-meta
       position: absolute

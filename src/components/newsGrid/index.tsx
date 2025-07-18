@@ -1,126 +1,67 @@
-import React, {useState} from "react";
-import Logo from '@images/logoNews.jpg'
-import PictureCard from '@images/pictureCard.png'
-import NewsItem from "@components/newsGrid/NewsItem";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import Logo from "@images/logoNews.jpg";
+import NewsTile from "@components/newsGrid/NewsTile";
 
-const mockNews = [
-  {
-    id: 1,
-    image: PictureCard,
-    title: 'Новый закон о кибербезопасности принят в ЕС',
-    tags: ['Безопасность'],
-    description: 'ЕС утвердил новые правила защиты данных.',
-    content: 'Европейский союз принял закон, усиливающий ответственность компаний за утечку данных. Новый нормативный акт требует от организаций, работающих с персональной информацией, внедрять более строгие меры защиты, включая обязательное шифрование и регулярный аудит безопасности. Кроме того, документ предусматривает увеличение штрафов за несоблюдение требований и устанавливает четкие сроки уведомления о нарушениях. Закон также обязывает компании назначать специалистов по защите данных и проводить обучение сотрудников. Эксперты считают, что это решение поможет повысить уровень кибербезопасности в странах ЕС и послужит примером для других регионов мира Европейский союз принял закон, усиливающий ответственность компаний за утечку данных и устанавливающий новые стандарты кибербезопасности для всех организаций, работающих с личными данными пользователей. Закон предусматривает обязательное уведомление о нарушениях в течение 72 часов, регулярные аудиты систем безопасности и внедрение современных методов шифрования. Ожидается, что новые правила повысят уровень доверия пользователей к цифровым',
-    date: '2025-06-15',
-    author: 'Ирина Козлова',
-  },
-  {
-    id: 2,
-    image: PictureCard,
-    title: 'Обнаружена экзопланета, похожая на Землю',
-    tags: ['Космос'],
-    description: 'Ученые нашли потенциально обитаемую планету.',
-    content: 'Астрономы из NASA сообщили об открытии экзопланеты, находящейся в зоне обитаемости...',
-    date: '2025-06-14',
-    author: 'Алексей Орлов',
-  },
-  {
-    id: 3,
-    image: PictureCard,
-    title: 'Прорыв в области искусственного интеллекта',
-    tags: ['AI'],
-    description: 'ИИ стал лучше понимать эмоции человека.',
-    content: 'Разработчики из компании X объявили о создании нейросети, которая способна распознавать...',
-    date: '2025-06-13',
-    author: 'Мария Петрова',
-  },
-  {
-    id: 4,
-    image: PictureCard,
-    title: 'Реформа школьного образования стартует осенью',
-    tags: ['Образование'],
-    description: 'Школы начнут переход на индивидуальные траектории.',
-    content: 'Министерство образования планирует внедрить персонализированные программы обучения...',
-    date: '2025-06-12',
-    author: 'Никита Смирнов',
-  },
-  {
-    id: 5,
-    image: PictureCard,
-    title: 'Илон Маск представил нейроинтерфейс нового поколения',
-    tags: ['Технологии'],
-    description: 'Новая версия Neuralink получила одобрение FDA.',
-    content: 'Компания Илона Маска Neuralink презентовала устройство, позволяющее управлять техникой силой мысли. Технология уже прошла успешные испытания на людях и получила одобрение регуляторов в США. Эксперты говорят о начале новой эры в нейротехнологиях.',
-    date: '2025-06-10',
-    author: 'Светлана Чернова',
-  },
-  {
-    id: 6,
-    image: PictureCard,
-    title: 'Учёные создали материал легче воздуха',
-    tags: ['Наука'],
-    description: 'Материал способен сохранять форму и прочность.',
-    content: 'Группа исследователей из Токио разработала уникальный материал на основе графена, обладающий плотностью ниже плотности воздуха. Он сохраняет прочность при экстремальных температурах и может применяться в авиации и космосе.',
-    date: '2025-06-09',
-    author: 'Григорий Лебедев',
-  },
-  {
-    id: 7,
-    image: PictureCard,
-    title: 'В России откроется первый город без автомобилей',
-    tags: ['Экология', 'Транспорт'],
-    description: 'Новый эко-город появится в Подмосковье.',
-    content: 'Министерство экологии России анонсировало строительство экспериментального города, где будет запрещено движение частного автотранспорта. Вся инфраструктура будет адаптирована под пешеходов, электроскутеры и общественный транспорт.',
-    date: '2025-06-08',
-    author: 'Даниил Иванов',
-  },
-  {
-    id: 8,
-    image: PictureCard,
-    title: 'Meta анонсировала метавселенную для обучения',
-    tags: ['Образование', 'Технологии'],
-    description: 'Виртуальные классы начнут тестировать в Европе.',
-    content: 'Компания Meta запускает пилотный проект метавселенной для дистанционного обучения. Учащиеся смогут посещать виртуальные школы с помощью VR-гарнитур и взаимодействовать с преподавателями и одноклассниками в 3D-пространстве.',
-    date: '2025-06-07',
-    author: 'Ольга Соколова',
-  },
-  {
-    id: 9,
-    image: PictureCard,
-    title: 'В Японии началось строительство подземного города',
-    tags: ['Городская среда', 'Архитектура'],
-    description: 'Мегаполис под землёй защитит от землетрясений.',
-    content: 'Японские инженеры начали реализацию проекта подземного мегаполиса в Токио. Новый город будет включать жилые кварталы, парки, офисы и транспорт. Цель — устойчивость к природным катастрофам и дефициту земли.',
-    date: '2025-06-06',
-    author: 'Такеши Накамура',
-  }
-];
+const PAGE_SIZE = 4;
+
+let hasInitialLoaded = false;
 
 function NewsGrid() {
+  const [news, setNews] = useState<any[]>([]);
   const [expandedId, setExpandedId] = useState<number | null>(1);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false);
+
+  const loadNews = async () => {
+    if (loading || !hasMore) return;
+    setLoading(true);
+
+    try {
+      const res = await axios.get("http://localhost:3000/news", {
+        params: { page, limit: PAGE_SIZE }
+      });
+      setNews(prev => [...prev, ...res.data.news]);
+      setHasMore(res.data.hasMore);
+      setPage(prev => prev + 1);
+    } catch (err) {
+      console.error("Ошибка загрузки новостей", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!hasInitialLoaded) {
+      loadNews();
+      hasInitialLoaded = true;
+    }
+  }, []);
 
   return (
     <div className="page-newsGrid">
       <div className="page-newsGrid-logo">
-        <img src={Logo} className="logo-news" alt='logo'/>
+        <img src={Logo} className="logo-news" alt="logo" />
         <h1>inFocus</h1>
       </div>
       <div className="page-newsGrid-list-news">
-        {mockNews.map((newsItem, index) => {
-          const actualId = index + 1;
-
-          const shouldHideBeforeExpanded =
-            expandedId !== null &&
-            expandedId % 3 === 0 &&
-            actualId === expandedId - 1;
-
-          if (shouldHideBeforeExpanded) return null;
-          return (
-            <NewsItem key={index} expandedId={expandedId} newsItem={newsItem}
-                      setExpandedId={setExpandedId} mockNewsItem={mockNews[expandedId - 2]}
-                      actualId={actualId}/>)
-        })}
+        {news.map((item, idx) => (
+          <NewsTile
+            key={item.id}
+            expandedId={expandedId}
+            newsItem={item}
+            setExpandedId={setExpandedId}
+            mockNewsItem={news[expandedId! - 2]}
+            actualId={idx + 1}
+          />
+        ))}
       </div>
+      {hasMore && (
+        <button className="button-news" onClick={loadNews} disabled={loading}>
+          {loading ? "Загрузка..." : "Загрузить ещё"}
+        </button>
+      )}
     </div>
   );
 }

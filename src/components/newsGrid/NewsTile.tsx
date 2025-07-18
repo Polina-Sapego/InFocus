@@ -1,5 +1,5 @@
 import React from "react";
-import NewGrid, {INewGridItem} from "@components/newsGrid/NewGrid";
+import NewGrid, {INewGridItem} from "@components/newsGrid/NewGridTile";
 
 interface NewsItemProps {
   expandedId: number | null;
@@ -7,21 +7,16 @@ interface NewsItemProps {
   newsItem: INewGridItem;
   setExpandedId: (id: number | null) => void;
   mockNewsItem: INewGridItem;
+  shouldHideBeforeExpanded: boolean;
 }
 
-const NewsItem: React.FC<NewsItemProps> = ({
+const NewsTile: React.FC<NewsItemProps> = ({
 expandedId,
 actualId,
 newsItem,
-setExpandedId,
-mockNewsItem
+setExpandedId
 }) => {
 
-  const handleTogglePrevious = () => {
-    if (expandedId !== null) {
-      setExpandedId(expandedId === expandedId - 1 ? null : expandedId - 1);
-    }
-  }
   const handleToggleCurrent = () => (setExpandedId(actualId === expandedId ? null : actualId))
 
   return (
@@ -36,22 +31,8 @@ mockNewsItem
           onClick={handleToggleCurrent}
         />
       </div>
-      {expandedId !== null &&
-        expandedId % 3 === 0 &&
-        actualId === expandedId && (
-          <div
-            className="page-newsGrid-news-card"
-            onClick={handleTogglePrevious}
-          >
-            <NewGrid
-              item={mockNewsItem}
-              isExpanded={false}
-              onClick={handleTogglePrevious}
-            />
-          </div>
-        )}
     </React.Fragment>
   );
 }
 
-export default NewsItem;
+export default NewsTile;
