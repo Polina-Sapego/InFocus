@@ -1,0 +1,80 @@
+@use '~@styles/components/common' as *
+
+.page-newsGrid
+  width: 100%
+  overflow: visible
+  position: relative
+  padding-bottom: 25%
+  place-items: center
+
+  .page-newsGrid-logo
+    display: grid
+    place-items: center
+    margin-bottom: 7%
+
+  .logo-news
+    width: 19%
+    height: auto
+
+  .page-newsGrid-list-news
+    display: grid
+    gap: 125px
+    max-width: 1290px
+    margin: 0 auto
+    grid-auto-rows: auto
+    grid-auto-flow: row dense
+    grid-template-columns: repeat(4, 1fr)
+
+    @media (max-width: 1400px)
+      grid-template-columns: repeat(2, 1fr)
+      max-width: 750px
+
+    @media (max-width: 1000px)
+      grid-template-columns: 1fr
+      max-width: 350px
+
+    .page-newsGrid-news-card
+      display: flex
+      flex-direction: column
+      height: auto
+      transition: transform 0.6s ease, box-shadow 0.5s ease, grid-column 1s ease, grid-row 1s ease
+      box-sizing: border-box
+      min-width: 0
+
+      &:not(.expanded):hover
+        transform: scale(1.5)
+        box-shadow: $hover-shadow
+        z-index: 10
+
+      &.expanded
+        grid-column: span 2
+        grid-row: span 2
+        z-index: 1
+        overflow: visible
+
+    @media (max-width: 1000px)
+     .page-newsGrid-news-card
+       aspect-ratio: 1 / 1
+       height: auto
+
+     .page-newsGrid-news-card.expanded
+      grid-column: span 1
+      aspect-ratio: auto
+
+  .button-news
+    display: flex
+    margin: 5% auto
+    padding: 10px 20px
+    font-size: 1rem
+    color: #fff
+    background-color: #393942
+    border: none
+    border-radius: 4px
+    cursor: pointer
+
+    &:hover
+      background-color: #515168
+
+    &:disabled
+      background-color: #aaa
+      cursor: not-allowed
