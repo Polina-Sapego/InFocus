@@ -1,6 +1,6 @@
 import React, {useEffect, useMemo, useRef, useState} from "react";
 import axios from "axios";
-import Logo from "@images/logoNews.jpg";
+import Logo from "@images/logoNews.png";
 import NewsTile from "@components/newsGrid/NewsTile";
 
 const PAGE_SIZE = 4;
