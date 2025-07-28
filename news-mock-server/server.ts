@@ -32,21 +32,11 @@ app.get('/news', (req: Request, res: Response) => {
   const end = start + limit;
   const raw = fs.readFileSync(dataPath, 'utf-8');
   const json: NewsData = JSON.parse(raw);
-
   const sliced = json.news.slice(start, end);
   res.json({
     news: sliced,
     hasMore: end < json.news.length
   });
-});
-
-app.get('/news/:id', (req: Request, res: Response) => {
-  const id = Number(req.params.id);
-  const raw = fs.readFileSync(dataPath, 'utf-8');
-  const json: NewsData = JSON.parse(raw);
-  const item = json.news.find(n => n.id === id);
-  if (!item) return res.status(404).json({ error: 'Not found' });
-  res.json(item);
 });
 
 app.listen(PORT, () => {
