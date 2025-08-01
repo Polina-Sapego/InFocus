@@ -16,23 +16,23 @@ interface INewsGridProps {
   onClick: () => void;
 }
 
-const NewsGrid: React.FC<INewsGridProps> = ({item, isExpanded, onClick}) => {
+const NewsItem: React.FC<INewsGridProps> = ({item, isExpanded, onClick}) => {
   const {image, title, tags, description, content, date, author} = item;
 
   return (
-    <div className={`page-newGrid ${isExpanded ? 'expanded' : ''}`} onClick={onClick}>
-      <div className={`page-newsGrid-picture ${isExpanded ? 'transform-picture' : ''}`}>
-        <img className="newsGrid-picture-card" src={image} alt={title}/>
-        <div className="page-newsGrid-meta">
-          <div className="page-newGrid-meta-description">
+    <div className={`page-newsItem ${isExpanded ? 'expanded' : ''}`} onClick={onClick}>
+      <div className={`page-newsItem-picture ${isExpanded ? 'transform-picture' : ''}`}>
+        <img className="newsItem-picture-card" src={image} alt={title}/>
+        <div className="page-newsItem-meta">
+          <div className="page-newsItem-meta-description">
             <h2>{title}</h2>
             <span>#{tags[0]} | {date} | {author}</span>
           </div>
         </div>
       </div>
       {isExpanded && (
-        <div className="page-newsGrid-content-wrapper">
-          <div className={`page-newsGrid-content ${isExpanded ? 'visible' : ''}`}>
+        <div className="page-newsItem-content-wrapper">
+          <div className={`page-newsItem-content ${isExpanded ? 'visible' : ''}`}>
             <h3>{title}</h3>
             <p>{description}</p>
             <p>{content}</p>
@@ -44,4 +44,4 @@ const NewsGrid: React.FC<INewsGridProps> = ({item, isExpanded, onClick}) => {
   );
 };
 
-export default NewsGrid;
+export default NewsItem;

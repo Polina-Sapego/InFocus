@@ -1,6 +1,6 @@
 @use '~@styles/components/common' as *
 
-.page-newGrid
+.page-newsItem
   display: flex
   gap: 16px
   padding: 3%
@@ -12,7 +12,7 @@
   &.expanded
     gap: 0
 
-  .page-newsGrid-picture
+  .page-newsItem-picture
     width: 100%
     aspect-ratio: 1 / 1
     position: relative
@@ -20,7 +20,7 @@
     &.transform-picture
       width: 40%
 
-    .newsGrid-picture-card
+    .newsItem-picture-card
       width: 100%
       height: 100%
       object-fit: cover
@@ -31,23 +31,23 @@
       margin-top: -100px
       z-index: 0
 
-    .page-newsGrid-meta
+    .page-newsItem-meta
       position: absolute
       bottom: 0
       width: 100%
       background: linear-gradient(to top, rgba($black, 0.6), transparent)
       color: $white
 
-      .page-newGrid-meta-description
+      .page-newsItem-meta-description
         font-size: 0.75rem
         margin: 6px 5px
 
-  .page-newsGrid-content-wrapper
+  .page-newsItem-content-wrapper
     flex: 1
     overflow: hidden
     transition: all 0.8s ease
 
-    .page-newsGrid-content
+    .page-newsItem-content
       padding-left: 5%
       display: flex
       flex-direction: column

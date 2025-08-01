@@ -1,5 +1,5 @@
 import React from "react";
-import NewGrid, {INewGridItem} from "@components/newsGrid/NewGridTile";
+import NewsItem, {INewGridItem} from "./NewsItem";
 
 interface NewsItemProps {
   expandedId: number | null;
@@ -22,10 +22,10 @@ setExpandedId
   return (
     <React.Fragment key={actualId}>
       <div
-        className={`page-newsGrid-news-card ${expandedId === actualId ? 'expanded' : ''}`}
+        className={`page-newsItem-news-card ${expandedId === actualId ? 'expanded' : ''}`}
         onClick={handleToggleCurrent}
       >
-        <NewGrid
+        <NewsItem
           item={newsItem}
           isExpanded={expandedId === actualId}
           onClick={handleToggleCurrent}

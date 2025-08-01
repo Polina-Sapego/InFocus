@@ -31,11 +31,11 @@ app.get('/news', (req: Request, res: Response) => {
   const start = (page - 1) * limit;
   const end = start + limit;
   const raw = fs.readFileSync(dataPath, 'utf-8');
-  const json: NewsData = JSON.parse(raw);
-  const sliced = json.news.slice(start, end);
+  const jsonNews: NewsData = JSON.parse(raw);
+  const sliced = jsonNews.news.slice(start, end);
   res.json({
     news: sliced,
-    hasMore: end < json.news.length
+    hasMore: end < jsonNews.news.length
   });
 });
 
