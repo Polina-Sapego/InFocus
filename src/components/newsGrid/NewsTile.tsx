@@ -7,7 +7,6 @@ interface NewsItemProps {
   newsItem: INewGridItem;
   setExpandedId: (id: number | null) => void;
   mockNewsItem: INewGridItem;
-  shouldHideBeforeExpanded: boolean;
 }
 
 const NewsTile: React.FC<NewsItemProps> = ({

@@ -1,21 +1,28 @@
-import React, {useEffect, useMemo, useRef, useState} from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
 import Logo from "@images/logoNews.png";
 import NewsTile from "./NewsTile";
+import { useLoaderData } from "react-router-dom";
+import {INewGridItem} from "./NewsItem";
 
 const PAGE_SIZE = 4;
 
-let hasInitialLoaded = false;
-
 function NewsGrid() {
-  const [news, setNews] = useState<any[]>([]);
+  const loaderData = useLoaderData() as {
+    news: INewGridItem[];
+    hasMore: boolean;
+    initialPage: number;
+  };
+
+  const [news, setNews] = useState(loaderData.news);
   const [expandedId, setExpandedId] = useState<number | null>(1);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(loaderData.initialPage);
+  const [hasMore, setHasMore] = useState(loaderData.hasMore);
   const [loading, setLoading] = useState(false);
   const observerRef = useRef<HTMLDivElement | null>(null);
 
   const loadNews = async () => {
+    setLoading(true);
     try {
       const res = await axios.get("http://localhost:3000/news", {
         params: { page, limit: PAGE_SIZE }
@@ -31,13 +38,6 @@ function NewsGrid() {
   };
 
   useEffect(() => {
-    if (!hasInitialLoaded) {
-      loadNews();
-      hasInitialLoaded = true;
-    }
-  }, []);
-
-  useEffect(() => {
     if (!observerRef.current || !hasMore || loading) return;
 
     const observer = new IntersectionObserver(
@@ -46,10 +46,10 @@ function NewsGrid() {
           loadNews();
         }
       },
-    {
-      rootMargin: "100px"
-    }
-    )
+      {
+        rootMargin: "100px"
+      }
+    );
     observer.observe(observerRef.current);
 
     return () => observer.disconnect();

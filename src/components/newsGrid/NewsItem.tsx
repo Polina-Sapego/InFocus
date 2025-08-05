@@ -1,6 +1,7 @@
 import React from "react";
 
 export interface INewGridItem {
+  id: number;
   image: string;
   title: string;
   tags: string[];
