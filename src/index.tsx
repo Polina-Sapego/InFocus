@@ -11,9 +11,18 @@ const router = createBrowserRouter([
     path: '/',
     element: <NewsGrid />,
     loader: async () => {
-      const res = await axios.get("http://localhost:3000/news");
-      return res.data;
-    },
+      const PAGE_SIZE = 4;
+      const INITIAL_PAGE = 1;
+      const res = await axios.get("http://localhost:3000/news", {
+        params: { page: INITIAL_PAGE, limit: PAGE_SIZE }
+      });
+
+      return {
+        news: res.data.news,
+        hasMore: res.data.hasMore,
+        initialPage: INITIAL_PAGE + 1,
+      };
+    }
   },
   {
     path: '/login',

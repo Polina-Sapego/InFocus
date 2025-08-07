@@ -21,13 +21,19 @@ function NewsGrid() {
   const [loading, setLoading] = useState(false);
   const observerRef = useRef<HTMLDivElement | null>(null);
 
-  const loadNews = async () => {
+  const loadNews = async (currentPage: number) => {
     setLoading(true);
     try {
       const res = await axios.get("http://localhost:3000/news", {
-        params: { page, limit: PAGE_SIZE }
+        params: { page: currentPage, limit: PAGE_SIZE }
       });
-      setNews(prev => [...prev, ...res.data.news]);
+
+      setNews(prev => {
+        const existingIds = new Set(prev.map(item => item.id));
+        const newItems = res.data.news.filter(item => !existingIds.has(item.id));
+        return [...prev, ...newItems];
+      });
+
       setHasMore(res.data.hasMore);
       setPage(prev => prev + 1);
     } catch (err) {
@@ -43,7 +49,7 @@ function NewsGrid() {
     const observer = new IntersectionObserver(
       entries => {
         if (entries[0].isIntersecting) {
-          loadNews();
+          loadNews(page);
         }
       },
       {
