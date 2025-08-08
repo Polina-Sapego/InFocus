@@ -8,7 +8,7 @@ import LogIn from '@components/logIn';
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: '/news',
     element: <NewsGrid />,
     loader: async () => {
       const PAGE_SIZE = 4;
@@ -25,7 +25,7 @@ const router = createBrowserRouter([
     }
   },
   {
-    path: '/login',
+    path: '/',
     element: <LogIn />,
   },
   {

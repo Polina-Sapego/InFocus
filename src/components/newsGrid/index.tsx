@@ -53,7 +53,7 @@ function NewsGrid() {
         }
       },
       {
-        rootMargin: "100px"
+        rootMargin: "1000px"
       }
     );
     observer.observe(observerRef.current);
