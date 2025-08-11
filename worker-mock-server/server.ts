@@ -6,16 +6,30 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const DEFAULT_LOGIN = "admin";
-const DEFAULT_PASSWORD = "admin123";
+const USERS = [
+  { login: "admin", password: "admin123" },
+  { login: "user1", password: "pass1" },
+  { login: "user2", password: "pass2" },
+  { login: "user3", password: "pass3" }
+];
 
 app.post("/login", (req, res) => {
   const { login, password } = req.body;
 
-  if (login === DEFAULT_LOGIN && password === DEFAULT_PASSWORD) {
-    res.status(200).json({ success: true });
+  const foundUser = USERS.find(
+    (user) => user.login === login && user.password === password
+  );
+
+  if (foundUser) {
+    res.status(200).json({
+      success: true,
+      user: { login: foundUser.login }
+    });
   } else {
-    res.status(401).json({ success: false, message: "Неверный логин или пароль" });
+    res.status(401).json({
+      success: false,
+      message: "Неверный логин или пароль"
+    });
   }
 });
 

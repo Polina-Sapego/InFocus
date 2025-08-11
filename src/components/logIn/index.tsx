@@ -22,6 +22,16 @@ function LogIn() {
         password: data.password,
       });
       if (response.data.success) {
+        const username = data.login;
+        const storedUsers = JSON.parse(localStorage.getItem("usersData") || "{}");
+
+        if (!storedUsers[username]) {
+          storedUsers[username] = { likes: [] };
+        }
+
+        localStorage.setItem("usersData", JSON.stringify(storedUsers));
+        localStorage.setItem("currentUser", username);
+
         navigate("/news");
       } else {
         setServerError("Неверный логин или пароль");
