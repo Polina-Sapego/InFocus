@@ -3,7 +3,9 @@ import axios from "axios";
 import Logo from "@images/logoNews.png";
 import NewsTile from "./NewsTile";
 import { useLoaderData } from "react-router-dom";
-import {INewGridItem} from "./NewsItem";
+import { INewGridItem } from "./NewsItem";
+import {getCurrentUser, getUserLikes} from "../userStorage";
+import {withLikeDecorator} from "./withLikeDecorator";
 
 const PAGE_SIZE = 4;
 
@@ -19,6 +21,7 @@ function NewsGrid() {
   const [page, setPage] = useState(loaderData.initialPage);
   const [hasMore, setHasMore] = useState(loaderData.hasMore);
   const [loading, setLoading] = useState(false);
+  const [showFavorites, setShowFavorites] = useState(false);
   const observerRef = useRef<HTMLDivElement | null>(null);
 
   const loadNews = async (currentPage: number) => {
@@ -61,18 +64,30 @@ function NewsGrid() {
     return () => observer.disconnect();
   }, [news, hasMore, loading]);
 
+  const displayedNews = useMemo(() => {
+    if (!showFavorites) return news;
+
+    const currentUser = getCurrentUser();
+    if (!currentUser) return [];
+
+    const likedIds = getUserLikes(currentUser)
+    return news.filter(item => likedIds.includes(item.id));
+  }, [news, showFavorites]);
+
+  const LikeableNewsTile = withLikeDecorator(NewsTile);
+
   const memoizedNewsTiles = useMemo(() => {
-    return news.map((item, idx) => (
-      <NewsTile
+    return displayedNews.map((item, idx) => (
+      <LikeableNewsTile
         key={item.id}
-        expandedId={expandedId}
         newsItem={item}
+        expandedId={expandedId}
         setExpandedId={setExpandedId}
         mockNewsItem={news[expandedId! - 2]}
         actualId={idx + 1}
       />
     ));
-  }, [news, expandedId]);
+  }, [displayedNews, expandedId]);
 
   return (
     <div className="page-newsGrid">
@@ -80,8 +95,16 @@ function NewsGrid() {
         <img src={Logo} className="logo-news" alt="logo" />
         <h1>inFocus</h1>
       </div>
+      <div className="page-newsGrid-filter">
+        <button
+          className="page-newsGrid-like"
+          onClick={() => setShowFavorites(prev => !prev)}
+        >
+          {showFavorites ? "Показать все" : "Избранное"}
+        </button>
+      </div>
       <div className="page-newsGrid-list-news">{memoizedNewsTiles}</div>
-      {hasMore && <div ref={observerRef} style={{ height: "1px" }} />}
+      {hasMore && !showFavorites && <div ref={observerRef} style={{ height: "1px" }} />}
     </div>
   );
 }

@@ -7,13 +7,17 @@ interface NewsItemProps {
   newsItem: INewGridItem;
   setExpandedId: (id: number | null) => void;
   mockNewsItem: INewGridItem;
+  isLiked?: boolean;
+  onLikeClick?: (e: React.MouseEvent) => void;
 }
 
 const NewsTile: React.FC<NewsItemProps> = ({
 expandedId,
 actualId,
 newsItem,
-setExpandedId
+setExpandedId,
+isLiked,
+onLikeClick
 }) => {
 
   const handleToggleCurrent = () => (setExpandedId(actualId === expandedId ? null : actualId))
@@ -28,6 +32,8 @@ setExpandedId
           item={newsItem}
           isExpanded={expandedId === actualId}
           onClick={handleToggleCurrent}
+          isLiked={isLiked}
+          onLikeClick={onLikeClick}
         />
       </div>
     </React.Fragment>

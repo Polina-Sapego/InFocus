@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { TextField, Button, Box } from "@mui/material";
 import axios, { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
+import { ensureUserExists, setCurrentUser } from "../userStorage";
 
 function LogIn() {
   const {
@@ -22,16 +23,8 @@ function LogIn() {
         password: data.password,
       });
       if (response.data.success) {
-        const username = data.login;
-        const storedUsers = JSON.parse(localStorage.getItem("usersData") || "{}");
-
-        if (!storedUsers[username]) {
-          storedUsers[username] = { likes: [] };
-        }
-
-        localStorage.setItem("usersData", JSON.stringify(storedUsers));
-        localStorage.setItem("currentUser", username);
-
+        ensureUserExists(data.login);
+        setCurrentUser(data.login);
         navigate("/news");
       } else {
         setServerError("Неверный логин или пароль");

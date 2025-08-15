@@ -17,6 +17,19 @@
     aspect-ratio: 1 / 1
     position: relative
 
+    .page-newsItem-like
+     position: absolute
+     top: 8px
+     right: 8px
+     z-index: 2
+     width: 20px
+     height: 20px
+     cursor: pointer
+     transition: transform 0.2s ease
+
+     &:hover
+       transform: scale(1.15)
+
     &.transform-picture
       width: 40%
 
