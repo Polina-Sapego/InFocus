@@ -1,5 +1,5 @@
-import {INewGridItem} from "./NewsItem";
-import {useUserLikes} from "./useUserLikes";
+import { INewGridItem } from "./NewsItem";
+import { useUserLikes } from "./useUserLikes";
 import React from "react";
 
 export function withLikeDecorator<T extends object>(

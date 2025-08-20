@@ -4,8 +4,9 @@ import Logo from "@images/logoNews.png";
 import NewsTile from "./NewsTile";
 import { useLoaderData } from "react-router-dom";
 import { INewGridItem } from "./NewsItem";
-import {getCurrentUser, getUserLikes} from "../userStorage";
-import {withLikeDecorator} from "./withLikeDecorator";
+import { getCurrentUser } from "../../services/userStorage";
+import { withLikeDecorator } from "./withLikeDecorator";
+import { likeHistory } from "../../services/likeHistory";
 
 const PAGE_SIZE = 4;
 
@@ -23,6 +24,7 @@ function NewsGrid() {
   const [loading, setLoading] = useState(false);
   const [showFavorites, setShowFavorites] = useState(false);
   const observerRef = useRef<HTMLDivElement | null>(null);
+  const [likes, setLikes] = useState<number[]>(() => likeHistory.getLikes());
 
   const loadNews = async (currentPage: number) => {
     setLoading(true);
@@ -64,15 +66,18 @@ function NewsGrid() {
     return () => observer.disconnect();
   }, [news, hasMore, loading]);
 
+  useEffect(() => {
+    likeHistory.setActiveUser(getCurrentUser());
+
+    return likeHistory.subscribe(() => {
+      setLikes([...likeHistory.getLikes()]);
+    });
+  }, []);
+
   const displayedNews = useMemo(() => {
     if (!showFavorites) return news;
-
-    const currentUser = getCurrentUser();
-    if (!currentUser) return [];
-
-    const likedIds = getUserLikes(currentUser)
-    return news.filter(item => likedIds.includes(item.id));
-  }, [news, showFavorites]);
+    return news.filter((item) => likes.includes(item.id));
+  }, [news, showFavorites, likes]);
 
   const LikeableNewsTile = withLikeDecorator(NewsTile);
 
@@ -96,6 +101,8 @@ function NewsGrid() {
         <h1>inFocus</h1>
       </div>
       <div className="page-newsGrid-filter">
+        <button className="page-newsGrid-like" onClick={() => likeHistory.undo()}>Отменить лайк</button>
+        <button className="page-newsGrid-like" onClick={() => likeHistory.redo()}>Вернуть лайк</button>
         <button
           className="page-newsGrid-like"
           onClick={() => setShowFavorites(prev => !prev)}

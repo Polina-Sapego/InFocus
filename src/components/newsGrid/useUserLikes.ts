@@ -1,28 +1,23 @@
-import { useState, useEffect } from "react";
-import { getCurrentUser, getUserLikes, setUserLikes } from "../userStorage";
+import { useEffect, useState, useCallback } from "react";
+import { likeHistory } from "../../services/likeHistory";
 
-export function useUserLikes(itemId: number) {
-  const [isLiked, setIsLiked] = useState(false);
+export function useUserLikes(id: number) {
+  const [isLiked, setIsLiked] = useState<boolean>(() => likeHistory.getLikes().includes(id));
 
   useEffect(() => {
-    const currentUser = getCurrentUser();
-    if (!currentUser) return;
+    return likeHistory.subscribe(() => {
+      setIsLiked(likeHistory.getLikes().includes(id));
+    });
+  }, [id]);
 
-    setIsLiked(getUserLikes(currentUser).includes(itemId));
-  }, [itemId]);
-
-  const toggleLike = () => {
-    const currentUser = getCurrentUser();
-    if (!currentUser) return;
-
-    const likes = getUserLikes(currentUser);
-    const updatedLikes = isLiked
-      ? likes.filter(id => id !== itemId)
-      : [...likes, itemId];
-
-    setUserLikes(currentUser, updatedLikes);
-    setIsLiked(!isLiked);
-  };
+  const toggleLike = useCallback(() => {
+    if (likeHistory.getLikes().includes(id)) {
+      likeHistory.unlike(id);
+    } else {
+      likeHistory.like(id);
+    }
+    setIsLiked(likeHistory.getLikes().includes(id));
+  }, [id]);
 
   return { isLiked, toggleLike };
 }
