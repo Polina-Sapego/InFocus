@@ -19,7 +19,7 @@ function LogIn() {
   const onSubmit = async (data) => {
     try {
       setServerError("");
-      const response = await axios.post("http://localhost:4000/login", {
+      const response = await axios.post("http://localhost:3000/login", {
         login: data.login,
         password: data.password,
       });

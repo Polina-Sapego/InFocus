@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import Logo from "@images/logoNews.png";
 import NewsTile from "./NewsTile";
@@ -64,7 +64,7 @@ function NewsGrid() {
     observer.observe(observerRef.current);
 
     return () => observer.disconnect();
-  }, [news, hasMore, loading]);
+  }, [news, hasMore, loading, showFavorites]);
 
   useEffect(() => {
     likeHistory.setActiveUser(getCurrentUser());
@@ -74,25 +74,11 @@ function NewsGrid() {
     });
   }, []);
 
-  const displayedNews = useMemo(() => {
-    if (!showFavorites) return news;
-    return news.filter((item) => likes.includes(item.id));
-  }, [news, showFavorites, likes]);
+  const displayedNews = showFavorites
+    ? news.filter(item => likes.includes(item.id))
+    : news;
 
-  const LikeableNewsTile = withLikeDecorator(NewsTile);
-
-  const memoizedNewsTiles = useMemo(() => {
-    return displayedNews.map((item, idx) => (
-      <LikeableNewsTile
-        key={item.id}
-        newsItem={item}
-        expandedId={expandedId}
-        setExpandedId={setExpandedId}
-        mockNewsItem={news[expandedId! - 2]}
-        actualId={idx + 1}
-      />
-    ));
-  }, [displayedNews, expandedId]);
+  const LikeableNewsTile = withLikeDecorator(React.memo(NewsTile));
 
   return (
     <div className="page-newsGrid">
@@ -110,8 +96,19 @@ function NewsGrid() {
           {showFavorites ? "Показать все" : "Избранное"}
         </button>
       </div>
-      <div className="page-newsGrid-list-news">{memoizedNewsTiles}</div>
-      {hasMore && !showFavorites && <div ref={observerRef} style={{ height: "1px" }} />}
+      <div className="page-newsGrid-list-news">
+        {displayedNews.map((item, idx) => (
+          <LikeableNewsTile
+            key={item.id}
+            newsItem={item}
+            expandedId={expandedId}
+            setExpandedId={setExpandedId}
+            mockNewsItem={news[expandedId! - 2]}
+            actualId={idx + 1}
+          />
+        ))}
+      </div>
+      {hasMore && !showFavorites && <div ref={observerRef} style={{height: "1px"}}/>}
     </div>
   );
 }
