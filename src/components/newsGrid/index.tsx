@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Logo from "@images/logoNews.png";
 import NewsTile from "./NewsTile";
@@ -7,6 +7,8 @@ import { INewGridItem } from "./NewsItem";
 import { getCurrentUser } from "../../services/userStorage";
 import { withLikeDecorator } from "./withLikeDecorator";
 import { likeHistory } from "../../services/likeHistory";
+import { useInfiniteScroll } from "../../hooks/useInfiniteScroll";
+import { useShowFavorites } from "../../hooks/useShowFavorites";
 
 const PAGE_SIZE = 4;
 
@@ -22,10 +24,8 @@ function NewsGrid() {
   const [page, setPage] = useState(loaderData.initialPage);
   const [hasMore, setHasMore] = useState(loaderData.hasMore);
   const [loading, setLoading] = useState(false);
-  const [showFavorites, setShowFavorites] = useState(false);
-  const observerRef = useRef<HTMLDivElement | null>(null);
   const [likes, setLikes] = useState<number[]>(() => likeHistory.getLikes());
-
+  const [showFavorites, setShowFavorites] = useShowFavorites();
   const loadNews = async (currentPage: number) => {
     setLoading(true);
     try {
@@ -48,23 +48,7 @@ function NewsGrid() {
     }
   };
 
-  useEffect(() => {
-    if (!observerRef.current || !hasMore || loading) return;
-
-    const observer = new IntersectionObserver(
-      entries => {
-        if (entries[0].isIntersecting) {
-          loadNews(page);
-        }
-      },
-      {
-        rootMargin: "1000px"
-      }
-    );
-    observer.observe(observerRef.current);
-
-    return () => observer.disconnect();
-  }, [news, hasMore, loading, showFavorites]);
+  const { observerRef } = useInfiniteScroll(() => loadNews(page), hasMore, loading);
 
   useEffect(() => {
     likeHistory.setActiveUser(getCurrentUser());

@@ -1,6 +1,7 @@
-import React, { useRef } from "react";
+import React from "react";
 import NewsItem, {INewGridItem} from "./NewsItem";
 import { addStat } from "../../services/statsCollector";
+import {useHoverTime} from "../../hooks/useHoverTime";
 
 interface NewsItemProps {
   expandedId: number | null;
@@ -21,29 +22,19 @@ isLiked,
 onLikeClick
 }) => {
 
-  const hoverStart = useRef<number | null>(null);
-
   const handleToggleCurrent = () => (setExpandedId(actualId === expandedId ? null : actualId))
 
-  const handleMouseEnter = () => {
-    hoverStart.current = Date.now();
-  }
-
-  const handleMouseLeave = () => {
-    if (hoverStart.current) {
-      const timeSpent = (Date.now() - hoverStart.current) / 1000;
-      addStat(newsItem.id.toString(), timeSpent);
-      hoverStart.current = null;
-    }
-  }
+  const { onMouseEnter, onMouseLeave } = useHoverTime((timeSpent) => {
+    addStat(newsItem.id.toString(), timeSpent);
+  });
 
   return (
     <React.Fragment key={actualId}>
       <div
         className={`page-newsItem-news-card ${expandedId === actualId ? 'expanded' : ''}`}
         onClick={handleToggleCurrent}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
       >
         <NewsItem
           item={newsItem}
