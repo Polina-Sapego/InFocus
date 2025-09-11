@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import axios from "axios";
 import Logo from "@images/logoNews.png";
 import NewsTile from "./NewsTile";
@@ -9,8 +9,11 @@ import { withLikeDecorator } from "./withLikeDecorator";
 import { likeHistory } from "../../services/likeHistory";
 import { useInfiniteScroll } from "../../hooks/useInfiniteScroll";
 import { useShowFavorites } from "../../hooks/useShowFavorites";
+import { statsBuffer } from "../../services/statsCollector";
 
 const PAGE_SIZE = 4;
+
+type strategyType = "date" | "stats" | null;
 
 function NewsGrid() {
   const loaderData = useLoaderData() as {
@@ -26,6 +29,9 @@ function NewsGrid() {
   const [loading, setLoading] = useState(false);
   const [likes, setLikes] = useState<number[]>(() => likeHistory.getLikes());
   const [showFavorites, setShowFavorites] = useShowFavorites();
+  const [strategy, setStrategy] = useState<strategyType>(null);
+  const [stats, setStats] = useState<Record<string, number>>({});
+
   const loadNews = async (currentPage: number) => {
     setLoading(true);
     try {
@@ -58,11 +64,56 @@ function NewsGrid() {
     });
   }, []);
 
-  const displayedNews = showFavorites
-    ? news.filter(item => likes.includes(item.id))
-    : news;
-
   const LikeableNewsTile = withLikeDecorator(React.memo(NewsTile));
+
+  const sortByData = (items: INewGridItem[]) =>
+    [...items].sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+
+  function sortByClicks(newsItems: INewGridItem[], stats: Record<string, number>) {
+    return [...newsItems].sort(
+      (a, b) => (stats[b.id] || 0) - (stats[a.id] || 0)
+    );
+  }
+
+  async function fetchStats() {
+    const res = await fetch("http://localhost:3000/stats");
+    return res.json();
+  }
+
+  useEffect(() => {
+    async function loadStats() {
+      try {
+        const data = await fetchStats();
+        setStats(data);
+      } catch (e) {
+        console.error("Ошибка загрузки статистики", e);
+      }
+    }
+    loadStats();
+  }, []);
+
+  const displayedNews = useMemo(() => {
+    let result = showFavorites
+      ? news.filter((item) => likes.includes(item.id))
+      : news;
+
+    switch (strategy) {
+      case "date":
+        result = sortByData(result);
+        break;
+
+      case "stats":
+        result = sortByClicks(result, stats);
+        break;
+
+      default:
+        break;
+    }
+
+    return result;
+  }, [news, likes, showFavorites, strategy, statsBuffer]);
 
   return (
     <div className="page-newsGrid">
@@ -71,8 +122,19 @@ function NewsGrid() {
         <h1>inFocus</h1>
       </div>
       <div className="page-newsGrid-filter">
-        <button className="page-newsGrid-like" onClick={() => likeHistory.undo()}>Отменить лайк</button>
-        <button className="page-newsGrid-like" onClick={() => likeHistory.redo()}>Вернуть лайк</button>
+        <label>
+          Сортировать &nbsp;
+          <select className="page-newsGrid-like" value={strategy ?? ""}
+                  onChange={(e) => setStrategy(e.target.value as strategyType)}>
+            <option value="">-выбрать-</option>
+            <option value="date">по дате</option>
+            <option value="stats">по популярности</option>
+          </select>
+        </label>
+        <button className="page-newsGrid-like">Отменить лайк
+        </button>
+        <button className="page-newsGrid-like">Вернуть лайк
+        </button>
         <button
           className="page-newsGrid-like"
           onClick={() => setShowFavorites(prev => !prev)}

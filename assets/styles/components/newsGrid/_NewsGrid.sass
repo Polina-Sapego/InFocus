@@ -25,7 +25,7 @@
 
     .page-newsGrid-like
       background-color: #f80e10
-      color: white
+      color: $white
       border: none
       padding: 8px 16px
       border-radius: 6px
@@ -34,6 +34,11 @@
       cursor: pointer
       transition: background-color 0.3s ease, transform 0.2s ease
 
+      option
+        background-color: #fff
+        color: #f80e10
+        font-weight: 600
+
       &:hover
         background-color: #f33a3a
         transform: scale(1.05)
@@ -41,11 +46,6 @@
       &:active
         background-color: #b64141
         transform: scale(0.97)
-
-      &:disabled
-        background-color: #cccccc
-        cursor: not-allowed
-        transform: none
 
   .page-newsGrid-list-news
     display: grid
