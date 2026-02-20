@@ -1,0 +1,27 @@
+@use '~@styles/components/common' as *
+$dark-grey: #333
+
+.login-page
+  height: 100vh
+  display: flex
+  justify-content: center
+  align-items: flex-start
+  padding-top: 80px
+
+  .login-form
+    display: flex
+    flex-direction: column
+    gap: 1.7rem
+    background-color: $white
+    padding: 32px
+    border-radius: 12px
+    box-shadow: 0 4px 12px rgba($black, 0.2)
+    max-width: 250px
+    width: 90%
+
+    .login-title
+     margin-bottom: 8px
+     font-size: 24px
+     font-weight: 600
+     text-align: center
+     color: $dark-grey
